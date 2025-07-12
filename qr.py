@@ -2,15 +2,15 @@ import streamlit as st
 import urllib.parse
 import random
 
-st.set_page_config(page_title="XPLØR QR", page_icon="🌴")
+st.set_page_config(page_title="XPLØR QR", page_icon="📲")
 
-# Estilos CSS modernos con texto blanco
+# 🌈 Estilos CSS modernos con texto blanco en botones
 st.markdown("""
 <style>
 .xplor-button {
     display: block;
     width: 100%;
-    background: linear-gradient(135deg, #27ae60, #219653);
+    background: linear-gradient(135deg, #28a745, #218838);
     color: white !important;
     padding: 15px;
     margin: 10px 0;
@@ -19,68 +19,78 @@ st.markdown("""
     font-size: 18px;
     font-weight: bold;
     text-align: center;
+    transition: all 0.3s ease;
     text-decoration: none;
-    transition: all 0.3s ease-in-out;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 .xplor-button:hover {
-    background: linear-gradient(135deg, #219653, #27ae60);
+    background: linear-gradient(135deg, #218838, #28a745);
     transform: scale(1.05);
     color: white !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-params = st.query_params if hasattr(st, 'query_params') else st.experimental_get_query_params()
-nombre = params.get("nombre", [None])[0]
-pais = params.get("pais", [None])[0]
+# 🕵️ Detectar parámetros de la URL
+params = st.query_params
+nombre = params.get("nombre", None)
+pais = params.get("pais", None)
 
+# 🌍 Si vienen parámetros → Página de bienvenida
 if nombre and pais:
-    st.markdown(f"""
-        <div style='text-align:center; margin-top:60px;'>
-            <h1 style='font-size:3em; color:#004225;'>🌟 ¡Hola {nombre.title()} de {pais.title()}!</h1>
-            <p style='font-size:1.5em; color:#004225;'>¿En qué te puedo asistir?</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    menu = st.selectbox("Elige una opción principal:", [
+    st.markdown(f"<h1 style='text-align:center;'>🌟 ¡Hola {nombre.title()} de {pais.title()}!</h1>", unsafe_allow_html=True)
+    st.subheader("¿En qué te puedo asistir?")
+    
+    # Menú 1 - Categoría
+    categoria = st.selectbox("Elige una opción principal:", [
         "Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"
     ])
 
-    if menu == "Lugares turísticos":
-        sub = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
-        sugerencias = {
-            "Museos": ["Biomuseo", "Museo del Canal", "Museo de Arte Contemporáneo"],
-            "Restaurantes": ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"],
-            "Naturaleza": ["Parque Natural Metropolitano", "Isla Taboga", "San Blas", "Volcán Barú"],
-            "Centros comerciales": ["Albrook Mall", "Multiplaza", "Metromall", "AltaPlaza"]
-        }
-    elif menu == "Hoteles":
-        sugerencias = {
-            "Hoteles": ["Hotel Sortis", "W Panama", "American Trade Hotel", "Selina Casco Viejo"]
-        }
-        sub = "Hoteles"
-    elif menu == "Transporte":
-        sugerencias = {
-            "Transporte": ["MiBus", "Metro de Panamá", "Uber", "Cabify"]
-        }
-        sub = "Transporte"
-    elif menu == "Tienes una emergencia":
-        sugerencias = {
-            "Emergencia": ["Policía: 104", "Ambulancia: 911", "Hospital Santo Tomás", "Hospital Nacional"]
-        }
-        sub = "Emergencia"
+    # Menú 2 - Subcategoría
+    subcategoria = None
+    if categoria == "Lugares turísticos":
+        subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
+    elif categoria == "Hoteles":
+        subcategoria = st.selectbox("¿Qué buscas?", ["Económicos", "Lujo", "Cerca del centro", "Con piscina"])
+    elif categoria == "Transporte":
+        subcategoria = st.selectbox("¿Qué necesitas?", ["Taxi", "Metro", "Renta de auto", "App de transporte"])
+    elif categoria == "Tienes una emergencia":
+        subcategoria = st.selectbox("¿Cuál es tu situación?", ["Hospital", "Policía", "Embajada", "Farmacia"])
 
-    st.subheader("Te recomendamos visitar:")
-    for lugar in sugerencias.get(sub, []):
-        query = urllib.parse.quote(lugar + " Panamá")
-        url = f"https://www.google.com/search?q={query}"
-        st.markdown(f"<a href='{url}' target='_blank' class='xplor-button'>{lugar}</a>", unsafe_allow_html=True)
+    # Sugerencias dinámicas por subcategoría
+    sugerencias = {
+        "Museos": ["Biomuseo", "Museo del Canal", "Museo de Arte Contemporáneo"],
+        "Restaurantes": ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"],
+        "Naturaleza": ["Parque Metropolitano", "Isla Taboga", "Parque Coiba", "Boquete"],
+        "Centros comerciales": ["Multiplaza", "Albrook Mall", "Metromall", "Soho Mall"],
+        "Económicos": ["Hostal Loco Coco Loco", "Hotel Centroamericano", "Hotel Marparaiso"],
+        "Lujo": ["Hotel Las Américas", "W Panama", "Trump Tower"],
+        "Cerca del centro": ["Hotel El Panamá", "Hotel Riu", "Hotel Marbella"],
+        "Con piscina": ["Sortis Hotel", "Hotel Crowne Plaza", "Bristol Panama"],
+        "Taxi": ["Uber", "Cabify", "Taxis Panameños"],
+        "Metro": ["Línea 1", "Línea 2", "MetroBus Recargas"],
+        "Renta de auto": ["Thrifty", "Hertz", "Dollar Rent A Car"],
+        "App de transporte": ["Uber", "InDrive", "Cabify"],
+        "Hospital": ["Hospital Punta Pacífica", "Hospital Nacional", "Hospital Santo Tomás"],
+        "Policía": ["Policía Nacional", "DIJ", "Servicio 104"],
+        "Embajada": ["Embajada de EE.UU.", "Embajada de Francia", "Embajada de Colombia"],
+        "Farmacia": ["Arrocha", "Metro Plus", "El Javillo"]
+    }
 
+    if subcategoria and subcategoria in sugerencias:
+        st.markdown("### Te recomendamos visitar:")
+        lugares = random.sample(sugerencias[subcategoria], k=min(4, len(sugerencias[subcategoria])))
+        for lugar in lugares:
+            url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
+            st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{lugar}</a>", unsafe_allow_html=True)
+
+# 🧩 Si NO hay parámetros → Generador de QR
 else:
-    st.title("📲 Generador de QR de Bienvenida\n**XPLØR**")
-    nombre = st.text_input("🧑 Nombre")
-    pais = st.text_input("🌐 País")
+    st.markdown("## 📲 Generador de QR de Bienvenida")
+    st.markdown("### **XPLØR**")
+
+    nombre = st.text_input("🐣 Nombre")
+    pais = st.text_input("🌍 País")
 
     if nombre and pais:
         pagina_base = "https://xplor-qr.streamlit.app"
@@ -90,6 +100,6 @@ else:
         st.code(local_url)
 
         qr_url = f"https://api.qrserver.com/v1/create-qr-code/?data={urllib.parse.quote(local_url)}&size=200x200"
-        st.image(qr_url, caption="🔲 Escanea este código QR", use_column_width=False)
+        st.image(qr_url, caption="🔲 Escanea este código QR")
 
-        st.markdown(f"<a href='{local_url}' target='_blank' class='xplor-button'>🌍 Abrir bienvenida personalizada</a>", unsafe_allow_html=True)
+        st.markdown(f"<a class='xplor-button' href='{local_url}' target='_blank'>🌐 Abrir bienvenida personalizada</a>", unsafe_allow_html=True)
