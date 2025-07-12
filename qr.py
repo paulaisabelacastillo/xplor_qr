@@ -124,9 +124,9 @@ if nombre and pais:
     elif menu_principal == "4. Tienes una emergencia":
         st.markdown("""
             <p><strong>📞 Contacta inmediatamente a:</strong></p>
-            <a href='tel:104' class='button'>🚓 Policía Nacional (104)</a>
-            <a href='tel:103' class='button'>🚑 Ambulancia (103)</a>
-            <a href='tel:911' class='button'>📞 Emergencias (911)</a>
+            <a href='tel:104' class='button' style='background:#d9534f;'>🚓 Policía Nacional (104)</a>
+            <a href='tel:103' class='button' style='background:#f0ad4e;'>🚑 Ambulancia (103)</a>
+            <a href='tel:911' class='button' style='background:#5bc0de;'>📞 Emergencias (911)</a>
         """, unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
