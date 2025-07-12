@@ -36,7 +36,7 @@ pais = params.get("pais", [None])[0]
 opcion = params.get("opcion", [None])[0]
 subopcion = params.get("subopcion", [None])[0]
 
-# Si ya escaneó el QR con parámetros:
+# Si ya escaneó el QR con parámetros: página de bienvenida y opciones
 if nombre and pais and opcion:
     st.title(f"🌟 ¡Bienvenido/a {nombre.title()} de {pais.title()}!")
 
@@ -71,22 +71,15 @@ if nombre and pais and opcion:
         <a href='tel:103' class='xplor-button' style='background: #1e90ff;'>🔥 Bomberos</a>
         """, unsafe_allow_html=True)
 
-# Si no hay parámetros: mostrar formulario
+# Si no hay parámetros: generador de QR solamente
 else:
     st.title("📲 Generador de QR de Bienvenida XPLØR")
     nombre = st.text_input("🧑 Nombre")
     pais = st.text_input("🌍 País")
-
-    st.markdown("---")
-    st.subheader("¿Te puedo asistir con?")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        categoria = st.selectbox("Selecciona una categoría", ["Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"])
-    with col2:
-        subcategoria = ""
-        if categoria == "Lugares turísticos":
-            subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
+    categoria = st.selectbox("Selecciona una categoría", ["Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"])
+    subcategoria = ""
+    if categoria == "Lugares turísticos":
+        subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
 
     if nombre and pais and categoria:
         base_url = "https://xplor-qr.streamlit.app"
