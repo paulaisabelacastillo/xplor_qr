@@ -75,28 +75,28 @@ if nombre and pais:
 
     menu_principal = st.selectbox("👉 ¿En qué puedo asistirte hoy?", [
         "Selecciona una opción...",
-        "✨ Lugares turísticos",
-        "🏨 Hoteles",
-        "🚌 Transporte",
-        "🚨 Tienes una emergencia"
+        "1. Lugares turísticos",
+        "2. Hoteles",
+        "3. Transporte",
+        "4. Tienes una emergencia"
     ])
 
-    if menu_principal == "✨ Lugares turísticos":
+    if menu_principal == "1. Lugares turísticos":
         submenu = st.selectbox("🌟 ¿Qué te interesa explorar?", [
             "Selecciona una categoría...",
-            "🏛️ Museos",
-            "🍽️ Restaurantes",
-            "🌿 Naturaleza",
-            "🛍️ Centros comerciales"
+            "1. Museos",
+            "2. Restaurantes",
+            "3. Naturaleza",
+            "4. Centros comerciales"
         ])
 
-        if submenu == "🏛️ Museos":
+        if submenu == "1. Museos":
             lugares = ["Biomuseo", "Museo del Canal", "Museo Afroantillano", "Museo de Arte Contemporáneo"]
-        elif submenu == "🍽️ Restaurantes":
+        elif submenu == "2. Restaurantes":
             lugares = ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"]
-        elif submenu == "🌿 Naturaleza":
+        elif submenu == "3. Naturaleza":
             lugares = ["Parque Natural Metropolitano", "Sendero del Cerro Ancón", "Gamboa", "Isla Taboga"]
-        elif submenu == "🛍️ Centros comerciales":
+        elif submenu == "4. Centros comerciales":
             lugares = ["Albrook Mall", "Multiplaza", "MetroMall", "Soho Mall"]
         else:
             lugares = []
@@ -107,21 +107,21 @@ if nombre and pais:
                 url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
                 st.markdown(f"<a href='{url}' class='button' target='_blank'>{lugar}</a>", unsafe_allow_html=True)
 
-    elif menu_principal == "🏨 Hoteles":
+    elif menu_principal == "2. Hoteles":
         hoteles = ["Hotel Central", "Hilton Panama", "Plaza Paitilla Inn", "Selina Casco Viejo"]
         st.markdown("<p><strong>Aquí tienes algunas opciones destacadas:</strong></p>", unsafe_allow_html=True)
         for hotel in hoteles:
             url = f"https://www.google.com/search?q={urllib.parse.quote(hotel + ' Panamá')}"
             st.markdown(f"<a href='{url}' class='button' target='_blank'>{hotel}</a>", unsafe_allow_html=True)
 
-    elif menu_principal == "🚌 Transporte":
+    elif menu_principal == "3. Transporte":
         opciones = ["Metro de Panamá", "MiBus", "Uber Panamá", "Alquiler de autos"]
         st.markdown("<p><strong>Elige una opción de transporte:</strong></p>", unsafe_allow_html=True)
         for opcion in opciones:
             url = f"https://www.google.com/search?q={urllib.parse.quote(opcion)}"
             st.markdown(f"<a href='{url}' class='button' target='_blank'>{opcion}</a>", unsafe_allow_html=True)
 
-    elif menu_principal == "🚨 Tienes una emergencia":
+    elif menu_principal == "4. Tienes una emergencia":
         st.markdown("""
             <p><strong>📞 Contacta inmediatamente a:</strong></p>
             <a href='tel:104' class='button'>🚓 Policía Nacional (104)</a>
