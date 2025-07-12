@@ -7,60 +7,73 @@ params = st.experimental_get_query_params()
 nombre = params.get("nombre", [None])[0]
 pais = params.get("pais", [None])[0]
 
-st.set_page_config(page_title="XPLØR - Bienvenida", page_icon="🌴")
+# 🖼️ Diseño de la página
+st.set_page_config(page_title="XPLØR Bienvenida", page_icon="🌴")
 
-# 🎨 Estilos CSS
-estilo_css = """
+# 💅 CSS personalizado para estilo increíble
+estilo = """
 <style>
 body {
-    background-color: #f4f8f3;
+    background: linear-gradient(to right, #f4f8f3, #e4f0eb);
     font-family: 'Segoe UI', sans-serif;
     color: #004225;
 }
+
 h1 {
-    font-size: 3em;
-    margin-bottom: 0.3em;
+    font-size: 3.2rem;
+    margin-bottom: 0.5em;
+    color: #004225;
 }
+
 p {
-    font-size: 1.4em;
+    font-size: 1.3rem;
+    margin-bottom: 1em;
 }
-a.button {
-    display: block;
+
+.container {
+    background-color: white;
+    padding: 3em;
+    margin-top: 4em;
+    border-radius: 30px;
+    box-shadow: 0 6px 20px rgba(0, 66, 37, 0.15);
+    text-align: center;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.button {
+    display: inline-block;
     background: #50a47a;
     color: white;
-    text-align: center;
-    padding: 15px;
-    margin: 12px auto;
-    border-radius: 25px;
+    padding: 15px 30px;
+    margin: 12px;
+    border-radius: 30px;
+    font-size: 1.1rem;
     text-decoration: none;
-    font-size: 18px;
-    width: 80%;
-    max-width: 400px;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
 }
-a.button:hover {
-    background: #387255;
+
+.button:hover {
+    background-color: #387255;
+    transform: scale(1.05);
 }
-.div-container {
+
+.qr-container {
     text-align: center;
-    padding: 40px 20px;
-    margin-top: 50px;
-    background-color: white;
-    border-radius: 20px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    margin-top: 2em;
 }
 </style>
 """
-st.markdown(estilo_css, unsafe_allow_html=True)
+st.markdown(estilo, unsafe_allow_html=True)
 
-# 👋 Página de bienvenida
+# 🌴 Página de bienvenida personalizada
 if nombre and pais:
     st.markdown(f"""
-        <div class='div-container'>
-            <h1>🎉 ¡Bienvenido/a {nombre.title()} de {pais.title()}!</h1>
+        <div class="container">
+            <h1>🌴 ¡Bienvenido/a {nombre.title()} de {pais.title()}!</h1>
             <p>Explora, aprende y diviértete con <strong>XPLØR</strong>.</p>
-            <p>Te recomendamos estos lugares increíbles en Panamá:</p>
-        </div>
+            <p>Te recomendamos estos lugares mágicos en Panamá:</p>
     """, unsafe_allow_html=True)
 
     lugares = [
@@ -71,22 +84,31 @@ if nombre and pais:
     recomendaciones = random.sample(lugares, 4)
     for lugar in recomendaciones:
         url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
-        st.markdown(f"<a href='{url}' target='_blank' class='button'>{lugar}</a>", unsafe_allow_html=True)
+        st.markdown(f"<a href='{url}' class='button' target='_blank'>{lugar}</a>", unsafe_allow_html=True)
 
-# 🛠️ Página del generador de QR
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# 📲 Generador de QR
 else:
-    st.title("🔲 Generador de QR de Bienvenida")
-    nombre = st.text_input("Nombre")
-    pais = st.text_input("País")
+    st.markdown("<div class='container'>", unsafe_allow_html=True)
+    st.title("🔲 Generador de QR personalizado")
+    st.write("Completa los datos para crear tu QR mágico ✨")
+
+    nombre = st.text_input("Tu nombre")
+    pais = st.text_input("Tu país")
 
     if nombre and pais:
         pagina_base = "https://xplor-qr.streamlit.app"
         local_url = f"{pagina_base}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}"
 
-        st.markdown("📌 Esta es la URL dentro del código QR:")
+        st.markdown("<div class='qr-container'>", unsafe_allow_html=True)
+        st.markdown("🔗 URL del QR:")
         st.code(local_url)
 
         qr_url = f"https://api.qrserver.com/v1/create-qr-code/?data={urllib.parse.quote(local_url)}&size=200x200"
-        st.image(qr_url, caption="🔲 Escanea este código QR", use_column_width=False)
+        st.image(qr_url, caption="📸 Escanea tu código QR", use_column_width=False)
 
-        st.markdown(f"<a href='{local_url}' target='_blank' class='button'>🌐 Abrir bienvenida personalizada</a>", unsafe_allow_html=True)
+        st.markdown(f"<a href='{local_url}' class='button' target='_blank'>🌐 Ir a tu bienvenida</a>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
