@@ -11,29 +11,32 @@ st.set_page_config(page_title="XPLØR Bienvenida", page_icon="🌴")
 estilo = """
 <style>
 body {
-    background: linear-gradient(to right, #f4f8f3, #e4f0eb);
+    background: linear-gradient(to right, #e0f7f1, #ffffff);
     font-family: 'Segoe UI', sans-serif;
     color: #004225;
 }
 h1 {
-    font-size: 3.2rem;
+    font-size: 3.5rem;
     margin-bottom: 0.5em;
     color: #004225;
+    text-shadow: 1px 1px 2px #cde3d6;
 }
 p {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     margin-bottom: 1em;
+    color: #3b5d50;
 }
 .container {
-    background-color: white;
+    background-color: #ffffff;
     padding: 3em;
-    margin-top: 4em;
+    margin-top: 3em;
     border-radius: 30px;
-    box-shadow: 0 6px 20px rgba(0,66,37,0.15);
+    box-shadow: 0 8px 25px rgba(0,66,37,0.15);
     text-align: center;
-    max-width: 700px;
+    max-width: 750px;
     margin-left: auto;
     margin-right: auto;
+    animation: fadeIn 1s ease-in-out;
 }
 .button {
     display: inline-block;
@@ -42,17 +45,22 @@ p {
     padding: 15px 30px;
     margin: 12px;
     border-radius: 30px;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     text-decoration: none;
     transition: all 0.3s ease;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
 }
 .button:hover {
     background-color: #387255;
-    transform: scale(1.05);
+    transform: scale(1.07);
 }
 .qr-container {
     text-align: center;
     margin-top: 2em;
+}
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
 }
 </style>
 """
@@ -62,58 +70,60 @@ if nombre and pais:
     st.markdown("<div class='container'>", unsafe_allow_html=True)
     st.markdown(f"""
         <h1>🌴 ¡Bienvenido/a {nombre.title()} de {pais.title()}!</h1>
-        <p>¿En qué puedo ayudarte hoy?</p>
+        <p><strong>Estoy aquí para ayudarte a vivir una experiencia inolvidable en Panamá.</strong></p>
     """, unsafe_allow_html=True)
 
-    menu_principal = st.selectbox("Te puedo asistir con:", [
+    menu_principal = st.selectbox("👉 ¿En qué puedo asistirte hoy?", [
         "Selecciona una opción...",
-        "1. Lugares turísticos",
-        "2. Hoteles",
-        "3. Transporte",
-        "4. Tienes una emergencia"
+        "✨ Lugares turísticos",
+        "🏨 Hoteles",
+        "🚌 Transporte",
+        "🚨 Tienes una emergencia"
     ])
 
-    if menu_principal == "1. Lugares turísticos":
-        submenu = st.selectbox("¿Qué te interesa?", [
+    if menu_principal == "✨ Lugares turísticos":
+        submenu = st.selectbox("🌟 ¿Qué te interesa explorar?", [
             "Selecciona una categoría...",
-            "1. Museos",
-            "2. Restaurantes",
-            "3. Naturaleza",
-            "4. Centros comerciales"
+            "🏛️ Museos",
+            "🍽️ Restaurantes",
+            "🌿 Naturaleza",
+            "🛍️ Centros comerciales"
         ])
 
-        if submenu == "1. Museos":
+        if submenu == "🏛️ Museos":
             lugares = ["Biomuseo", "Museo del Canal", "Museo Afroantillano", "Museo de Arte Contemporáneo"]
-        elif submenu == "2. Restaurantes":
+        elif submenu == "🍽️ Restaurantes":
             lugares = ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"]
-        elif submenu == "3. Naturaleza":
+        elif submenu == "🌿 Naturaleza":
             lugares = ["Parque Natural Metropolitano", "Sendero del Cerro Ancón", "Gamboa", "Isla Taboga"]
-        elif submenu == "4. Centros comerciales":
+        elif submenu == "🛍️ Centros comerciales":
             lugares = ["Albrook Mall", "Multiplaza", "MetroMall", "Soho Mall"]
         else:
             lugares = []
 
         if lugares:
-            st.markdown("<hr><p>Te recomendamos visitar:</p>", unsafe_allow_html=True)
+            st.markdown("<hr><p><strong>Te recomendamos visitar:</strong></p>", unsafe_allow_html=True)
             for lugar in lugares:
                 url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
                 st.markdown(f"<a href='{url}' class='button' target='_blank'>{lugar}</a>", unsafe_allow_html=True)
 
-    elif menu_principal == "2. Hoteles":
+    elif menu_principal == "🏨 Hoteles":
         hoteles = ["Hotel Central", "Hilton Panama", "Plaza Paitilla Inn", "Selina Casco Viejo"]
+        st.markdown("<p><strong>Aquí tienes algunas opciones destacadas:</strong></p>", unsafe_allow_html=True)
         for hotel in hoteles:
             url = f"https://www.google.com/search?q={urllib.parse.quote(hotel + ' Panamá')}"
             st.markdown(f"<a href='{url}' class='button' target='_blank'>{hotel}</a>", unsafe_allow_html=True)
 
-    elif menu_principal == "3. Transporte":
+    elif menu_principal == "🚌 Transporte":
         opciones = ["Metro de Panamá", "MiBus", "Uber Panamá", "Alquiler de autos"]
+        st.markdown("<p><strong>Elige una opción de transporte:</strong></p>", unsafe_allow_html=True)
         for opcion in opciones:
             url = f"https://www.google.com/search?q={urllib.parse.quote(opcion)}"
             st.markdown(f"<a href='{url}' class='button' target='_blank'>{opcion}</a>", unsafe_allow_html=True)
 
-    elif menu_principal == "4. Tienes una emergencia":
+    elif menu_principal == "🚨 Tienes una emergencia":
         st.markdown("""
-            <p><strong>Contacta inmediatamente a:</strong></p>
+            <p><strong>📞 Contacta inmediatamente a:</strong></p>
             <a href='tel:104' class='button'>🚓 Policía Nacional (104)</a>
             <a href='tel:103' class='button'>🚑 Ambulancia (103)</a>
             <a href='tel:911' class='button'>📞 Emergencias (911)</a>
@@ -124,10 +134,10 @@ if nombre and pais:
 else:
     st.markdown("<div class='container'>", unsafe_allow_html=True)
     st.title("🔲 Generador de QR personalizado")
-    st.write("Completa los datos para crear tu QR mágico ✨")
+    st.write("👤 Completa los datos para crear tu código mágico de bienvenida ✨")
 
-    nombre = st.text_input("Tu nombre")
-    pais = st.text_input("Tu país")
+    nombre = st.text_input("🧑 Tu nombre")
+    pais = st.text_input("🌍 Tu país")
 
     if nombre and pais:
         pagina_base = "https://xplor-qr.streamlit.app"
