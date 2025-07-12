@@ -2,28 +2,29 @@ import streamlit as st
 import urllib.parse
 import random
 
-st.set_page_config(page_title="XPLØR Panamá", page_icon="🌴")
+st.set_page_config(page_title="XPLØR Asistente Turístico", page_icon="🌴")
 
+# Estilos modernos y llamativos
 st.markdown("""
     <style>
-    .option-button {
+    .xplor-button {
         display: block;
-        width: 80%;
-        max-width: 300px;
-        margin: 12px auto;
-        padding: 16px;
+        width: 100%;
+        background: linear-gradient(to right, #00C9FF, #92FE9D);
+        color: black;
+        padding: 15px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 25px;
         font-size: 18px;
         font-weight: bold;
-        color: white;
-        background: linear-gradient(135deg, #008CBA, #005f73);
-        border-radius: 35px;
         text-align: center;
-        text-decoration: none;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         transition: all 0.3s ease;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    .option-button:hover {
-        background: linear-gradient(135deg, #00b4d8, #023e8a);
+    .xplor-button:hover {
+        background: linear-gradient(to right, #43e97b, #38f9d7);
         transform: scale(1.05);
     }
     </style>
@@ -32,95 +33,71 @@ st.markdown("""
 params = st.experimental_get_query_params()
 nombre = params.get("nombre", [None])[0]
 pais = params.get("pais", [None])[0]
+opcion = params.get("opcion", [None])[0]
+subopcion = params.get("subopcion", [None])[0]
 
-if nombre and pais:
-    st.markdown(f"""
-        <div style='text-align:center; margin-top:30px;'>
-            <h1 style='font-size:2.5em; color:#004225;'>🎉 ¡Hola {nombre} de {pais}! 🌍</h1>
-            <p style='font-size:1.3em;'>¿En qué puedo ayudarte hoy?</p>
-        </div>
-    """, unsafe_allow_html=True)
+# Si ya escaneó el QR con parámetros:
+if nombre and pais and opcion:
+    st.title(f"🌟 ¡Bienvenido/a {nombre.title()} de {pais.title()}!")
 
-    opcion = st.radio("Te puedo asistir con:", [
-        "Lugares turísticos",
-        "Hoteles",
-        "Transporte",
-        "Tienes una emergencia"
-    ])
-
-    if opcion == "Lugares turísticos":
-        interes = st.radio("¿Qué te interesa más?", [
-            "Museos",
-            "Restaurantes",
-            "Naturaleza",
-            "Centros Comerciales"
-        ])
-
+    if opcion == "Lugares turísticos" and subopcion:
+        st.subheader(f"Te interesan lugares de tipo: {subopcion}")
         lugares = {
-            "Museos": ["Museo del Canal", "Biomuseo", "Museo de Arte Contemporáneo", "Museo Afroantillano"],
-            "Restaurantes": ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"],
-            "Naturaleza": ["Parque Metropolitano", "Causeway de Amador", "Cerro Ancón", "Jardín Botánico"],
-            "Centros Comerciales": ["Albrook Mall", "Multiplaza", "Metromall", "AltaPlaza"]
+            "Museos": ["Biomuseo", "Museo Afroantillano", "Museo del Canal"],
+            "Restaurantes": ["Mercado del Marisco", "Tántalo", "Maito", "Fonda Lo Que Hay"],
+            "Naturaleza": ["Parque Natural Metropolitano", "Cerro Ancón", "Isla Taboga"],
+            "Centros comerciales": ["Albrook Mall", "Multiplaza", "AltaPlaza"]
         }
-
-        recomendaciones = random.sample(lugares[interes], 4)
-
-        st.subheader("🌟 Te recomendamos visitar:")
-
-        for lugar in recomendaciones:
+        for lugar in lugares.get(subopcion, []):
             url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
-            st.markdown(
-                f"<a href='{url}' target='_blank' class='option-button'>{lugar}</a>",
-                unsafe_allow_html=True
-            )
+            st.markdown(f"<a href='{url}' target='_blank' class='xplor-button'>{lugar}</a>", unsafe_allow_html=True)
 
     elif opcion == "Hoteles":
-        hoteles = ["Hotel Central Panamá", "Sortis Hotel", "W Panamá", "Selina Casco Viejo"]
-        recomendados = random.sample(hoteles, 3)
-
-        st.subheader("🏨 Hoteles sugeridos:")
-        for h in recomendados:
-            url = f"https://www.google.com/search?q={urllib.parse.quote(h)}"
-            st.markdown(
-                f"<a href='{url}' target='_blank' class='option-button'>{h}</a>",
-                unsafe_allow_html=True
-            )
+        hoteles = ["Central Hotel Panamá", "Hotel Sortis", "W Panamá", "Selina Casco Viejo"]
+        for hotel in hoteles:
+            url = f"https://www.google.com/search?q={urllib.parse.quote(hotel)}"
+            st.markdown(f"<a href='{url}' target='_blank' class='xplor-button'>{hotel}</a>", unsafe_allow_html=True)
 
     elif opcion == "Transporte":
-        st.subheader("🚌 Opciones de transporte recomendadas")
-        transportes = [
-            ("MiBus (MetroBus)", "https://www.mibus.com.pa"),
-            ("Metro de Panamá", "https://www.elmetrodepanama.com"),
-            ("Uber Panamá", "https://www.uber.com/pa/es/"),
-            ("Cabify Panamá", "https://cabify.com/pa")
-        ]
-        for nombre, enlace in transportes:
-            st.markdown(
-                f"<a href='{enlace}' target='_blank' class='option-button'>{nombre}</a>",
-                unsafe_allow_html=True
-            )
+        transportes = ["MiBus Panamá", "Metro de Panamá", "Uber Panamá", "DiDi Panamá"]
+        for t in transportes:
+            url = f"https://www.google.com/search?q={urllib.parse.quote(t)}"
+            st.markdown(f"<a href='{url}' target='_blank' class='xplor-button'>{t}</a>", unsafe_allow_html=True)
 
     elif opcion == "Tienes una emergencia":
-        st.subheader("📞 Números de emergencia en Panamá:")
         st.markdown("""
-            <a href='tel:104' class='option-button' style='background:crimson;'>🚓 Policía Nacional (104)</a>
-            <a href='tel:103' class='option-button' style='background:orangered;'>🚑 Ambulancia (103)</a>
-            <a href='tel:911' class='option-button' style='background:#ff6600;'>📞 Emergencias (911)</a>
+        <a href='tel:104' class='xplor-button' style='background: #ff4d4d;'>🚨 Policía Nacional</a>
+        <a href='tel:911' class='xplor-button' style='background: #ff9900;'>🚑 Ambulancia</a>
+        <a href='tel:103' class='xplor-button' style='background: #1e90ff;'>🔥 Bomberos</a>
         """, unsafe_allow_html=True)
 
+# Si no hay parámetros: mostrar formulario
 else:
-    st.title("🔲 Generador de QR de Bienvenida")
-    nombre = st.text_input("Nombre")
-    pais = st.text_input("País")
+    st.title("📲 Generador de QR de Bienvenida XPLØR")
+    nombre = st.text_input("🧑 Nombre")
+    pais = st.text_input("🌍 País")
 
-    if nombre and pais:
-        pagina_base = "https://xplor-qr.streamlit.app"
-        local_url = f"{pagina_base}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}"
+    st.markdown("---")
+    st.subheader("¿Te puedo asistir con?")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        categoria = st.selectbox("Selecciona una categoría", ["Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"])
+    with col2:
+        subcategoria = ""
+        if categoria == "Lugares turísticos":
+            subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
+
+    if nombre and pais and categoria:
+        base_url = "https://xplor-qr.streamlit.app"
+        url = f"{base_url}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}&opcion={urllib.parse.quote(categoria)}"
+        if subcategoria:
+            url += f"&subopcion={urllib.parse.quote(subcategoria)}"
 
         st.markdown("📌 Esta es la URL dentro del código QR:")
-        st.code(local_url)
+        st.code(url)
 
-        qr_url = f"https://api.qrserver.com/v1/create-qr-code/?data={urllib.parse.quote(local_url)}&size=200x200"
+        qr_url = f"https://api.qrserver.com/v1/create-qr-code/?data={urllib.parse.quote(url)}&size=200x200"
         st.image(qr_url, caption="🔲 Escanea este código QR", use_column_width=False)
 
-        st.markdown(f"[🌐 Abrir bienvenida personalizada]({local_url})", unsafe_allow_html=True)
+        st.markdown(f"[🌐 Abrir bienvenida personalizada]({url})", unsafe_allow_html=True)
