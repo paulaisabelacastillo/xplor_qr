@@ -16,12 +16,12 @@ h1, h2, h3 {
 .xplor-button {
     display: block;
     width: 100%;
-    background: linear-gradient(90deg, #006400, #32cd32);
-    color: white;
-    padding: 12px;
+    background: linear-gradient(135deg, #28a745, #218838);  /* Fondo verde */
+    color: white;  /* Texto blanco */
+    padding: 15px;
     margin: 10px 0;
     border: none;
-    border-radius: 30px;
+    border-radius: 25px;
     font-size: 18px;
     font-weight: bold;
     text-align: center;
@@ -30,7 +30,7 @@ h1, h2, h3 {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 .xplor-button:hover {
-    background: linear-gradient(90deg, #32cd32, #228B22);
+    background: linear-gradient(135deg, #218838, #1e7e34);
     transform: scale(1.05);
 }
 </style>
