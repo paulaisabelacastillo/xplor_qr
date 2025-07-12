@@ -35,7 +35,7 @@ else:
 
     if nombre and pais:
         # 👇 CAMBIA esta URL por la de tu app real (la sabrás en el Paso 6)
-        pagina_base = "https://xplor-panama.streamlit.app"
+        pagina_base = "https://xplor-qr.streamlit.app"  # 👈 tu nueva URL real
         local_url = f"{pagina_base}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}"
 
         st.markdown("📌 Esta es la URL dentro del código QR:")
@@ -45,6 +45,4 @@ else:
         st.image(qr_url, caption="🔲 Escanea este código QR", use_column_width=False)
 
         st.markdown(f"[🌐 Abrir bienvenida personalizada]({local_url})", unsafe_allow_html=True)
-
-
-
+        
