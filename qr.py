@@ -4,7 +4,7 @@ import random
 
 st.set_page_config(page_title="XPLØR QR", page_icon="📲")
 
-# 🌈 Estilos CSS modernos con texto blanco en botones
+# 🌈 Estilos CSS modernos
 st.markdown("""
 <style>
 .xplor-button {
@@ -35,18 +35,20 @@ st.markdown("""
 params = st.query_params
 nombre = params.get("nombre", None)
 pais = params.get("pais", None)
+email = params.get("email", None)
 
-# 🌍 Si vienen parámetros → Página de bienvenida
-if nombre and pais:
+# 🌍 Página de bienvenida
+if nombre and pais and email:
     st.markdown(f"<h1 style='text-align:center;'>🌟 ¡Hola {nombre.title()} de {pais.title()}!</h1>", unsafe_allow_html=True)
+    st.subheader(f"📧 Email: {email}")
     st.subheader("¿En qué te puedo asistir?")
-    
-    # Menú 1 - Categoría
+
+    # Menú 1
     categoria = st.selectbox("Elige una opción principal:", [
         "Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"
     ])
 
-    # Menú 2 - Subcategoría
+    # Menú 2 - Subcategorías
     subcategoria = None
     if categoria == "Lugares turísticos":
         subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
@@ -57,7 +59,6 @@ if nombre and pais:
     elif categoria == "Tienes una emergencia":
         subcategoria = st.selectbox("¿Cuál es tu situación?", ["Hospital", "Policía", "Embajada", "Farmacia"])
 
-    # Sugerencias dinámicas por subcategoría
     sugerencias = {
         "Museos": ["Biomuseo", "Museo del Canal", "Museo de Arte Contemporáneo"],
         "Restaurantes": ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"],
@@ -84,17 +85,18 @@ if nombre and pais:
             url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
             st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{lugar}</a>", unsafe_allow_html=True)
 
-# 🧩 Si NO hay parámetros → Generador de QR
+# 🧩 Generador de QR
 else:
     st.markdown("## 📲 Generador de QR de Bienvenida")
     st.markdown("### **XPLØR**")
 
     nombre = st.text_input("🐣 Nombre")
     pais = st.text_input("🌍 País")
+    email = st.text_input("📧 Email")
 
-    if nombre and pais:
+    if nombre and pais and email:
         pagina_base = "https://xplor-qr.streamlit.app"
-        local_url = f"{pagina_base}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}"
+        local_url = f"{pagina_base}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}&email={urllib.parse.quote(email)}"
 
         st.markdown("📌 Esta es la URL dentro del código QR:")
         st.code(local_url)
