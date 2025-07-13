@@ -31,11 +31,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 🕵️ Detectar parámetros de la URL
-params = st.query_params
-nombre = params.get("nombre", None)
-pais = params.get("pais", None)
-email = params.get("email", None)
+# 🕵️ Detectar parámetros de la URL correctamente
+params = st.experimental_get_query_params()
+nombre = params.get("nombre", [None])[0]
+pais = params.get("pais", [None])[0]
+email = params.get("email", [None])[0]
 
 # 🌍 Página de bienvenida
 if nombre and pais and email:
@@ -48,7 +48,7 @@ if nombre and pais and email:
         "Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"
     ])
 
-    # Menú 2 - Subcategorías
+    # Menú 2
     subcategoria = None
     if categoria == "Lugares turísticos":
         subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
