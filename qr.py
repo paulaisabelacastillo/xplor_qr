@@ -2,88 +2,74 @@ import streamlit as st
 import urllib.parse
 import random
 
-# 🌐 Configuración de la página
 st.set_page_config(page_title="XPLØR QR", page_icon="📲", layout="centered")
 
-# 🌸 Fondo, botones y estilos visuales
+# 🌈 Paleta y estilos modernos
 st.markdown("""
 <style>
-/* Fondo con degradado suave */
-body {
-    background: linear-gradient(to right, #fdfbfb, #ebedee);
-}
-
-/* Estilo general para toda la app */
+/* Fondo claro con color suave */
 html, body, [class*="css"] {
-    font-family: 'Trebuchet MS', sans-serif;
-    background-color: #f9f9ff;
-}
-
-/* Encabezados */
-h1, h2, h3 {
-    text-align: center;
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    font-family: 'Segoe UI', sans-serif;
     color: #2c3e50;
 }
 
-/* Botón personalizado */
+/* Encabezados centrados */
+h1, h3 {
+    text-align: center;
+    color: #0a5f78;
+}
+
+/* Botones */
 .xplor-button {
     display: block;
     width: 100%;
-    background: linear-gradient(135deg, #74ebd5, #9face6);
+    background: linear-gradient(135deg, #009688, #4db6ac);
     color: white !important;
-    padding: 15px;
+    padding: 16px;
     margin: 12px 0;
     border: none;
     border-radius: 30px;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     text-align: center;
     transition: all 0.3s ease;
     text-decoration: none;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 .xplor-button:hover {
-    background: linear-gradient(135deg, #9face6, #74ebd5);
-    transform: scale(1.08);
-    color: white !important;
+    background: linear-gradient(135deg, #00796b, #26a69a);
+    transform: scale(1.07);
     cursor: pointer;
-}
-
-/* Footer */
-.footer {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 13px;
-    color: #888;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 🧭 Obtener parámetros de URL
+# 🚀 Parámetros desde URL
 params = st.experimental_get_query_params()
 nombre = params.get("nombre", [None])[0]
 pais = params.get("pais", [None])[0]
 email = params.get("email", [None])[0]
 
-# 🎉 Página de bienvenida
+# 🎉 Pantalla de bienvenida
 if nombre and pais and email:
     st.markdown(f"<h1>🌟 ¡Hola {nombre.title()} de {pais.title()}!</h1>", unsafe_allow_html=True)
     st.markdown(f"<h3>📧 Email: {email}</h3>", unsafe_allow_html=True)
     st.markdown("<h3>¿En qué te puedo asistir?</h3>", unsafe_allow_html=True)
 
-    categoria = st.selectbox("🔍 Elige una opción principal:", [
+    categoria = st.selectbox("Selecciona una categoría:", [
         "Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"
     ])
 
     subcategoria = None
     if categoria == "Lugares turísticos":
-        subcategoria = st.selectbox("🌴 ¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
+        subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
     elif categoria == "Hoteles":
-        subcategoria = st.selectbox("🏨 ¿Qué buscas?", ["Económicos", "Lujo", "Cerca del centro", "Con piscina"])
+        subcategoria = st.selectbox("¿Qué buscas?", ["Económicos", "Lujo", "Cerca del centro", "Con piscina"])
     elif categoria == "Transporte":
-        subcategoria = st.selectbox("🚕 ¿Qué necesitas?", ["Taxi", "Metro", "Renta de auto", "App de transporte"])
+        subcategoria = st.selectbox("¿Qué necesitas?", ["Taxi", "Metro", "Renta de auto", "App de transporte"])
     elif categoria == "Tienes una emergencia":
-        subcategoria = st.selectbox("🚨 ¿Cuál es tu situación?", ["Hospital", "Policía", "Embajada", "Farmacia"])
+        subcategoria = st.selectbox("¿Cuál es tu situación?", ["Hospital", "Policía", "Embajada", "Farmacia"])
 
     sugerencias = {
         "Museos": ["Biomuseo", "Museo del Canal", "Museo de Arte Contemporáneo"],
