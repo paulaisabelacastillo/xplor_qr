@@ -2,11 +2,16 @@ import streamlit as st
 import urllib.parse
 import random
 
+# 🌐 Configuración de la página
 st.set_page_config(page_title="XPLØR QR", page_icon="📲")
 
-# 🌈 Estilos CSS modernos
+# 🎨 Estilos personalizados
 st.markdown("""
 <style>
+h1, h2, h3 {
+    text-align: center;
+    color: #1d3557;
+}
 .xplor-button {
     display: block;
     width: 100%;
@@ -28,36 +33,40 @@ st.markdown("""
     transform: scale(1.05);
     color: white !important;
 }
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 14px;
+    color: #888;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# 🕵️ Detectar parámetros de la URL correctamente
+# 🧭 Obtener parámetros desde la URL
 params = st.experimental_get_query_params()
 nombre = params.get("nombre", [None])[0]
 pais = params.get("pais", [None])[0]
 email = params.get("email", [None])[0]
 
-# 🌍 Página de bienvenida
+# 🎉 Si vienen datos en la URL, mostramos la bienvenida
 if nombre and pais and email:
-    st.markdown(f"<h1 style='text-align:center;'>🌟 ¡Hola {nombre.title()} de {pais.title()}!</h1>", unsafe_allow_html=True)
-    st.subheader(f"📧 Email: {email}")
-    st.subheader("¿En qué te puedo asistir?")
+    st.markdown(f"<h1>🌟 ¡Hola {nombre.title()} de {pais.title()}!</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h3>📧 Email: {email}</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>¿En qué te puedo asistir?</h3>", unsafe_allow_html=True)
 
-    # Menú 1
-    categoria = st.selectbox("Elige una opción principal:", [
+    categoria = st.selectbox("🔍 Elige una opción principal:", [
         "Lugares turísticos", "Hoteles", "Transporte", "Tienes una emergencia"
     ])
 
-    # Menú 2
     subcategoria = None
     if categoria == "Lugares turísticos":
-        subcategoria = st.selectbox("¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
+        subcategoria = st.selectbox("🌴 ¿Qué te interesa?", ["Museos", "Restaurantes", "Naturaleza", "Centros comerciales"])
     elif categoria == "Hoteles":
-        subcategoria = st.selectbox("¿Qué buscas?", ["Económicos", "Lujo", "Cerca del centro", "Con piscina"])
+        subcategoria = st.selectbox("🏨 ¿Qué buscas?", ["Económicos", "Lujo", "Cerca del centro", "Con piscina"])
     elif categoria == "Transporte":
-        subcategoria = st.selectbox("¿Qué necesitas?", ["Taxi", "Metro", "Renta de auto", "App de transporte"])
+        subcategoria = st.selectbox("🚕 ¿Qué necesitas?", ["Taxi", "Metro", "Renta de auto", "App de transporte"])
     elif categoria == "Tienes una emergencia":
-        subcategoria = st.selectbox("¿Cuál es tu situación?", ["Hospital", "Policía", "Embajada", "Farmacia"])
+        subcategoria = st.selectbox("🚨 ¿Cuál es tu situación?", ["Hospital", "Policía", "Embajada", "Farmacia"])
 
     sugerencias = {
         "Museos": ["Biomuseo", "Museo del Canal", "Museo de Arte Contemporáneo"],
@@ -78,17 +87,17 @@ if nombre and pais and email:
         "Farmacia": ["Arrocha", "Metro Plus", "El Javillo"]
     }
 
-    if subcategoria and subcategoria in sugerencias:
-        st.markdown("### Te recomendamos visitar:")
+    if subcategoria in sugerencias:
+        st.markdown("### ⭐ Te recomendamos:")
         lugares = random.sample(sugerencias[subcategoria], k=min(4, len(sugerencias[subcategoria])))
         for lugar in lugares:
             url = f"https://www.google.com/search?q={urllib.parse.quote(lugar + ' Panamá')}"
             st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{lugar}</a>", unsafe_allow_html=True)
 
-# 🧩 Generador de QR
+# 🧩 Formulario para generar QR
 else:
-    st.markdown("## 📲 Generador de QR de Bienvenida")
-    st.markdown("### **XPLØR**")
+    st.markdown("<h1>📲 Generador de QR de Bienvenida</h1>", unsafe_allow_html=True)
+    st.markdown("### ✨ ¡Completa los datos y comparte tu aventura!")
 
     nombre = st.text_input("🐣 Nombre")
     pais = st.text_input("🌍 País")
@@ -98,10 +107,13 @@ else:
         pagina_base = "https://xplor-qr.streamlit.app"
         local_url = f"{pagina_base}/?nombre={urllib.parse.quote(nombre)}&pais={urllib.parse.quote(pais)}&email={urllib.parse.quote(email)}"
 
-        st.markdown("📌 Esta es la URL dentro del código QR:")
+        st.markdown("🔗 Esta es la URL para tu bienvenida:")
         st.code(local_url)
 
         qr_url = f"https://api.qrserver.com/v1/create-qr-code/?data={urllib.parse.quote(local_url)}&size=200x200"
-        st.image(qr_url, caption="🔲 Escanea este código QR")
+        st.image(qr_url, caption="🔲 Escanea tu código QR")
 
-        st.markdown(f"<a class='xplor-button' href='{local_url}' target='_blank'>🌐 Abrir bienvenida personalizada</a>", unsafe_allow_html=True)
+        st.markdown(f"<a class='xplor-button' href='{local_url}' target='_blank'>🌐 Ver Bienvenida</a>", unsafe_allow_html=True)
+
+# Footer
+st.markdown("<div class='footer'>© 2025 XPLØR - PTY 🌎</div>", unsafe_allow_html=True)
