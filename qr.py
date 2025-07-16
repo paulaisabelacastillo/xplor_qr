@@ -119,4 +119,4 @@ else:
         st.markdown(f"<a class='xplor-button' href='{local_url}' target='_blank'>🌐 Ver tu bienvenida</a>", unsafe_allow_html=True)
 
 # Footer
-st.markdown("<div class='footer'>🌎 XPLØR by Teen4STEAM © 2025</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>🌎 XPLØR © 2025</div>", unsafe_allow_html=True)
