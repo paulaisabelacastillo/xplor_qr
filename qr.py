@@ -25,6 +25,8 @@ h1, h3 { text-align: center; color: #0a5f78; }
 .xplor-button:hover { background: linear-gradient(135deg, #00796b, #26a69a); transform: scale(1.07); cursor:pointer; }
 .footer { text-align:center; margin-top:32px; opacity:.7; }
 .badge { display:inline-block; background:#e0f2f1; color:#00695c; padding:6px 12px; border-radius:999px; margin:4px; font-size:14px; }
+.cta-link { text-align:center; margin-top: 24px; }
+.cta-link a { color:#00695c; font-weight:600; text-decoration:underline; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -41,11 +43,26 @@ def _decode_data_param(data_param: str):
 params = st.query_params  # API nueva de Streamlit
 data_param = params.get("data")  # str | None
 
+# ====== Bloque reutilizable: CTA a sitio web ======
+def render_cta_web():
+    st.markdown(
+        "<div class='cta-link'>Para más información ingresar a la página de "
+        "<a href='http://www.xplorandplay.com/' target='_blank' rel='noopener noreferrer'>http://www.xplorandplay.com/</a>"
+        "</div>",
+        unsafe_allow_html=True
+    )
+    # Botón grande opcional
+    st.markdown(
+        "<a class='xplor-button' href='http://www.xplorandplay.com/' target='_blank' rel='noopener noreferrer'>Ir a xplorandplay.com</a>",
+        unsafe_allow_html=True
+    )
+
 # ====== Flujo directo con ?data= ======
 if data_param:
     payload = _decode_data_param(data_param)
     if not payload:
         st.error("No pude leer los datos del QR. Pídele al robot que genere uno nuevo.")
+        render_cta_web()
         st.markdown("<div class='footer'>XPLØR © 2025</div>", unsafe_allow_html=True)
         st.stop()
 
@@ -83,10 +100,14 @@ if data_param:
     else:
         st.info("Aún no hay sugerencias. Pídele al robot que te recomiende 3–5 lugares.")
 
+    # === NUEVO: CTA al sitio ===
+    render_cta_web()
+
     st.markdown("<div class='footer'>XPLØR © 2025</div>", unsafe_allow_html=True)
     st.stop()
 
 # ====== Modo kiosco: si NO llega ?data=, no hay formulario ======
 st.markdown("<h1>Escanea el QR del robot</h1>", unsafe_allow_html=True)
 st.write("Abre esta página desde el código QR generado por XPLØRBot para ver tus recomendaciones.")
+render_cta_web()
 st.markdown("<div class='footer'>XPLØR © 2025</div>", unsafe_allow_html=True)
