@@ -77,7 +77,7 @@ if data_param:
     if nombre or pais:
         st.markdown(f"<h1>¡Hola {nombre.title()} de {pais.title()}!</h1>", unsafe_allow_html=True)
     else:
-        st.markdown("<h1>Tus recomendaciones XPLØR</h1>", unsafe_allow_html=True)
+        st.markdown("<h1>XPLØR Tus recomendaciones </h1>", unsafe_allow_html=True)
     if email:
         st.markdown(f"<h3>Email: {email}</h3>", unsafe_allow_html=True)
 
@@ -103,7 +103,7 @@ if data_param:
     # === NUEVO: CTA al sitio ===
     render_cta_web()
 
-    st.markdown("<div class='footer'>XPLØR © 2025</div>", unsafe_allow_html=True)
+    st.markdown("<div class='footer'>@Xplor.pty © 2025</div>", unsafe_allow_html=True)
     st.stop()
 
 # ====== Modo kiosco: si NO llega ?data=, no hay formulario ======
