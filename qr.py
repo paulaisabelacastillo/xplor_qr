@@ -51,7 +51,7 @@ def render_cta_web():
         "</div>",
         unsafe_allow_html=True
     )
-    # Botón grande opcional
+    # (Si no quieres botón adicional, elimina este bloque)
     st.markdown(
         "<a class='xplor-button' href='http://www.xplorandplay.com/' target='_blank' rel='noopener noreferrer'>Ir a xplorandplay.com</a>",
         unsafe_allow_html=True
@@ -63,7 +63,7 @@ if data_param:
     if not payload:
         st.error("No pude leer los datos del QR. Pídele al robot que genere uno nuevo.")
         render_cta_web()
-        st.markdown("<div class='footer'>XPLØR © 2025</div>", unsafe_allow_html=True)
+        st.markdown("<div class='footer'>@Xplor.pty © 2025</div>", unsafe_allow_html=True)
         st.stop()
 
     nombre       = payload.get("nombre", "")
@@ -88,19 +88,19 @@ if data_param:
     if chips:
         st.markdown(" ".join(chips), unsafe_allow_html=True)
 
-    # Sugerencias
+    # Sugerencias -> ahora llevan a xplorandplay.com/explore.html?q=<lugar>
     if sugerencias:
         st.markdown("### Te recomendamos:")
         for lugar in sugerencias:
-            q = urllib.parse.quote(lugar + " Panamá")
+            dest = f"http://www.xplorandplay.com/explore.html?q={urllib.parse.quote(lugar)}"
             st.markdown(
-                f"<a class='xplor-button' href='https://www.google.com/search?q={q}' target='_blank'>{lugar}</a>",
+                f"<a class='xplor-button' href='{dest}' target='_blank' rel='noopener noreferrer'>{lugar}</a>",
                 unsafe_allow_html=True
             )
     else:
         st.info("Aún no hay sugerencias. Pídele al robot que te recomiende 3–5 lugares.")
 
-    # === NUEVO: CTA al sitio ===
+    # CTA al sitio
     render_cta_web()
 
     st.markdown("<div class='footer'>@Xplor.pty © 2025</div>", unsafe_allow_html=True)
