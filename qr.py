@@ -157,3 +157,4 @@ else:
 
 # === Footer ===
 st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 for the World Robot Olympiad (Singapore Edition)</div>", unsafe_allow_html=True)
+
