@@ -76,9 +76,11 @@ h3, h4 {
 </style>
 """, unsafe_allow_html=True)
 
-# 🚀 Get encoded payload from robot
-params = st.experimental_get_query_params()
-payload_data = params.get("data", [None])[0]
+# ✅ Updated function for Streamlit >= 1.33
+params = st.query_params
+
+# 🚀 Get encoded payload from robot (?data=)
+payload_data = params.get("data", None)
 
 # 🧩 Decode payload sent by XPLØRBOT
 if payload_data:
