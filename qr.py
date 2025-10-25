@@ -4,13 +4,13 @@ import json, base64
 
 st.set_page_config(page_title="XPLØR QR", page_icon="🤖", layout="centered")
 
-# 🌈 Modern Glass-UI Style
+# 🌈 Modern Glass UI
 st.markdown("""
 <style>
 html, body, [class*="css"] {
-    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    background: linear-gradient(135deg, #E0F7FA, #FFFFFF);
     font-family: 'Segoe UI', sans-serif;
-    color: #2c3e50;
+    color: #2C3E50;
 }
 h1, h3, h4 {
     text-align: center;
@@ -43,19 +43,31 @@ h1, h3, h4 {
     margin-top: 40px;
     font-size: 14px;
 }
-.robot-image {
-    display: block;
-    margin: 0 auto 20px auto;
-    width: 160px;
-}
 </style>
 """, unsafe_allow_html=True)
 
-# 🧩 Get parameters from URL
+# 🚀 Get encoded payload from URL (?data=)
 params = st.experimental_get_query_params()
 payload_data = params.get("data", [None])[0]
 
-# 🧠 Same dictionary as robot
+# 🧩 Decode payload sent by XPLØRBOT
+if payload_data:
+    try:
+        padded = payload_data + "=" * (-len(payload_data) % 4)
+        decoded = json.loads(base64.urlsafe_b64decode(padded.encode()).decode())
+
+        category = decoded.get("category", "Tourist attractions")
+        subcategory = decoded.get("subcategory", "")
+        suggestions = decoded.get("suggestions", [])
+    except Exception as e:
+        st.error("⚠️ Invalid QR data. Please scan again.")
+        st.stop()
+else:
+    # If the page is opened manually (no QR)
+    st.warning("⚠️ Please scan the QR code from XPLØRBOT to view your recommendations.")
+    st.stop()
+
+# 🧭 Same suggestion database as robot
 SUGGESTIONS = {
     "Museums": ["Biomuseum", "Canal Museum", "Museum of Contemporary Art"],
     "Restaurants": ["Seafood Market", "Tantalo", "Maito", "Fonda Lo Que Hay"],
@@ -75,46 +87,22 @@ SUGGESTIONS = {
     "Pharmacy": ["Arrocha", "Metro Plus", "El Javillo"]
 }
 
-# 🚀 Decode robot payload
-if payload_data:
-    try:
-        padded = payload_data + "=" * (-len(payload_data) % 4)
-        decoded = json.loads(base64.urlsafe_b64decode(padded.encode()).decode())
-        category = decoded.get("category", "Tourist attractions")
-        subcategory = decoded.get("subcategory", "")
-        suggestions = decoded.get("suggestions", [])
-        name = decoded.get("name", "Visitor")
-        country = decoded.get("country", "Traveler")
-    except Exception as e:
-        st.error("⚠️ Invalid or corrupted QR data. Please scan again.")
-        st.stop()
-else:
-    st.warning("⚠️ This page only works when opened from the robot’s QR code.")
-    st.stop()
+# 🤖 HEADER
+st.image("https://raw.githubusercontent.com/marisollinero/xplor-assets/main/xplorbot_head.png",
+         use_column_width=False, width=150)
+st.markdown(f"<h1>🤖 Welcome to Panama!</h1>", unsafe_allow_html=True)
+st.markdown(f"<h3>Category: <b>{category}</b></h3>", unsafe_allow_html=True)
+if subcategory:
+    st.markdown(f"<h4>Topic: <b>{subcategory}</b></h4>", unsafe_allow_html=True)
 
-# 🤖 Header
-st.image("https://raw.githubusercontent.com/marisollinero/xplor-assets/main/xplorbot_head.png", 
-         use_column_width=False, 
-         output_format="PNG", 
-         caption="", 
-         width=160)
-
-st.markdown(f"<h1>👋 Hello, {name.title()}!</h1>", unsafe_allow_html=True)
-st.markdown(f"<h3>Welcome to Panama 🇵🇦</h3>", unsafe_allow_html=True)
-
-if category and subcategory:
-    st.markdown(f"<h4>Exploring: <b>{subcategory}</b> ({category})</h4>", unsafe_allow_html=True)
-else:
-    st.markdown("<h4>Here are your personalized recommendations:</h4>", unsafe_allow_html=True)
-
-# 🌟 Show Recommendations
+# 🌟 RECOMMENDATIONS
 if suggestions:
     st.markdown("### 🌟 XPLØRBOT recommends:")
     for place in suggestions:
         url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
         st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
 else:
-    # fallback if the robot sends only category/subcategory
+    # fallback if robot only sent category/subcategory
     fallback = SUGGESTIONS.get(subcategory, [])
     if fallback:
         st.markdown("### 🌟 XPLØRBOT recommends:")
@@ -124,5 +112,5 @@ else:
     else:
         st.info("No recommendations available. Please rescan your QR.")
 
-# Footer
-st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦</div>", unsafe_allow_html=True)
+# FOOTER
+st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 for the World Robot Olympiad (Singapore Edition)</div>", unsafe_allow_html=True)
