@@ -1,23 +1,20 @@
 import streamlit as st
 import urllib.parse
-import random
+import json, base64
 
 st.set_page_config(page_title="XPLØR QR", page_icon="🤖", layout="centered")
 
-# 🌈 Modern Styles (Glass UI look)
+# 🌈 Modern Glass-UI Style
 st.markdown("""
 <style>
 html, body, [class*="css"] {
-    background: linear-gradient(135deg, #E0F7FA, #FFFFFF);
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
     font-family: 'Segoe UI', sans-serif;
-    color: #2C3E50;
+    color: #2c3e50;
 }
 h1, h3, h4 {
     text-align: center;
     color: #01579B;
-}
-div[data-testid="stSelectbox"] label {
-    font-weight: 600;
 }
 .xplor-button {
     display: block;
@@ -43,50 +40,23 @@ div[data-testid="stSelectbox"] label {
 .footer {
     text-align: center;
     color: #607D8B;
-    margin-top: 30px;
+    margin-top: 40px;
     font-size: 14px;
+}
+.robot-image {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 160px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 🚀 URL Parameters (either ?data=encoded_payload or ?nombre/pais/email)
+# 🧩 Get parameters from URL
 params = st.experimental_get_query_params()
-
-# === Allow both URL types ===
-name = params.get("nombre", [None])[0]
-country = params.get("pais", [None])[0]
-email = params.get("email", [None])[0]
 payload_data = params.get("data", [None])[0]
 
-# === Decode payload from robot if exists ===
-if payload_data:
-    import json, base64
-    try:
-        padded = payload_data + "=" * (-len(payload_data) % 4)
-        decoded = json.loads(base64.urlsafe_b64decode(padded.encode()).decode())
-        category = decoded.get("category")
-        subcategory = decoded.get("subcategory")
-        suggestions = decoded.get("suggestions", [])
-        name = decoded.get("name", "Visitor")
-        country = decoded.get("country", "Unknown")
-        email = decoded.get("email", "")
-    except Exception as e:
-        st.error("Invalid QR data format.")
-        category = subcategory = None
-        suggestions = []
-else:
-    category = subcategory = None
-    suggestions = []
-
-# 🗺️ SAME DATA AS ROBOT
-categories = ["Tourist attractions", "Hotels", "Transportation", "Emergency services"]
-subcategories = {
-    "Tourist attractions": ["Museums", "Restaurants", "Nature", "Shopping malls"],
-    "Hotels": ["Budget", "Luxury", "Downtown", "With pool"],
-    "Transportation": ["Taxi", "Metro", "Car rental", "Ride-sharing apps"],
-    "Emergency services": ["Hospital", "Police", "Embassy", "Pharmacy"],
-}
-recommendations = {
+# 🧠 Same dictionary as robot
+SUGGESTIONS = {
     "Museums": ["Biomuseum", "Canal Museum", "Museum of Contemporary Art"],
     "Restaurants": ["Seafood Market", "Tantalo", "Maito", "Fonda Lo Que Hay"],
     "Nature": ["Metropolitan Park", "Taboga Island", "Coiba National Park", "Boquete"],
@@ -105,55 +75,54 @@ recommendations = {
     "Pharmacy": ["Arrocha", "Metro Plus", "El Javillo"]
 }
 
-# === If payload from robot ===
+# 🚀 Decode robot payload
 if payload_data:
-    st.markdown(f"<h1>👋 Hello, {name.title()}!</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3>Welcome to Panama 🇵🇦</h3>", unsafe_allow_html=True)
+    try:
+        padded = payload_data + "=" * (-len(payload_data) % 4)
+        decoded = json.loads(base64.urlsafe_b64decode(padded.encode()).decode())
+        category = decoded.get("category", "Tourist attractions")
+        subcategory = decoded.get("subcategory", "")
+        suggestions = decoded.get("suggestions", [])
+        name = decoded.get("name", "Visitor")
+        country = decoded.get("country", "Traveler")
+    except Exception as e:
+        st.error("⚠️ Invalid or corrupted QR data. Please scan again.")
+        st.stop()
+else:
+    st.warning("⚠️ This page only works when opened from the robot’s QR code.")
+    st.stop()
 
-    if category and subcategory:
-        st.markdown(f"### You asked about **{subcategory}** in **{category}**.")
-    else:
-        st.markdown("### Here's what XPLØRBOT recommends for you:")
+# 🤖 Header
+st.image("https://raw.githubusercontent.com/marisollinero/xplor-assets/main/xplorbot_head.png", 
+         use_column_width=False, 
+         output_format="PNG", 
+         caption="", 
+         width=160)
 
-    st.markdown("#### 🌟 Recommended for you:")
+st.markdown(f"<h1>👋 Hello, {name.title()}!</h1>", unsafe_allow_html=True)
+st.markdown(f"<h3>Welcome to Panama 🇵🇦</h3>", unsafe_allow_html=True)
+
+if category and subcategory:
+    st.markdown(f"<h4>Exploring: <b>{subcategory}</b> ({category})</h4>", unsafe_allow_html=True)
+else:
+    st.markdown("<h4>Here are your personalized recommendations:</h4>", unsafe_allow_html=True)
+
+# 🌟 Show Recommendations
+if suggestions:
+    st.markdown("### 🌟 XPLØRBOT recommends:")
     for place in suggestions:
         url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
         st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
-
-# === Manual input mode (no payload) ===
-elif name and country and email:
-    st.markdown(f"<h1>👋 Welcome, {name.title()} from {country.title()}!</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h3>📧 Email: {email}</h3>", unsafe_allow_html=True)
-    st.markdown("<h4>How can I assist you today?</h4>", unsafe_allow_html=True)
-
-    category = st.selectbox("Select a category:", categories)
-    subcategory = st.selectbox("Select a subcategory:", subcategories[category])
-    
-    st.markdown("### 🌟 Recommended for you:")
-    for place in recommendations[subcategory]:
-        url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
-        st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
-
-# === Default QR Generator ===
 else:
-    st.markdown("<h1>🎯 Welcome QR Generator</h1>", unsafe_allow_html=True)
-    st.markdown("### Create your personalized welcome link for XPLØRBOT!")
+    # fallback if the robot sends only category/subcategory
+    fallback = SUGGESTIONS.get(subcategory, [])
+    if fallback:
+        st.markdown("### 🌟 XPLØRBOT recommends:")
+        for place in fallback:
+            url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
+            st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
+    else:
+        st.info("No recommendations available. Please rescan your QR.")
 
-    name = st.text_input("Your name")
-    country = st.text_input("Your country")
-    email = st.text_input("Your email address")
-
-    if name and country and email:
-        base_page = "https://xplor-qr.streamlit.app"
-        personal_url = f"{base_page}/?nombre={urllib.parse.quote(name)}&pais={urllib.parse.quote(country)}&email={urllib.parse.quote(email)}"
-
-        st.markdown("🔗 Your personalized link:")
-        st.code(personal_url)
-
-        qr_url = f"https://api.qrserver.com/v1/create-qr-code/?data={urllib.parse.quote(personal_url)}&size=200x200"
-        st.image(qr_url, caption="📸 Scan this QR code to access your welcome page")
-
-        st.markdown(f"<a class='xplor-button' href='{personal_url}' target='_blank'>Open your Welcome Page</a>", unsafe_allow_html=True)
-
-# === Footer ===
-st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 for the World Robot Olympiad (Singapore Edition)</div>", unsafe_allow_html=True)
+# Footer
+st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦</div>", unsafe_allow_html=True)
