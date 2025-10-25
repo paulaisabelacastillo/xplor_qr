@@ -2,7 +2,7 @@ import streamlit as st
 import urllib.parse
 import random
 
-st.set_page_config(page_title="XPLØR QR", page_icon="🌍", layout="centered")
+st.set_page_config(page_title="XPLØR QR", page_icon="🤖", layout="centered")
 
 # 🌈 Modern Styles (Glass UI look)
 st.markdown("""
@@ -49,63 +49,92 @@ div[data-testid="stSelectbox"] label {
 </style>
 """, unsafe_allow_html=True)
 
-# 🚀 URL Parameters
+# 🚀 URL Parameters (either ?data=encoded_payload or ?nombre/pais/email)
 params = st.experimental_get_query_params()
+
+# === Allow both URL types ===
 name = params.get("nombre", [None])[0]
 country = params.get("pais", [None])[0]
 email = params.get("email", [None])[0]
+payload_data = params.get("data", [None])[0]
 
-# 🎉 Welcome Screen
-if name and country and email:
+# === Decode payload from robot if exists ===
+if payload_data:
+    import json, base64
+    try:
+        padded = payload_data + "=" * (-len(payload_data) % 4)
+        decoded = json.loads(base64.urlsafe_b64decode(padded.encode()).decode())
+        category = decoded.get("category")
+        subcategory = decoded.get("subcategory")
+        suggestions = decoded.get("suggestions", [])
+        name = decoded.get("name", "Visitor")
+        country = decoded.get("country", "Unknown")
+        email = decoded.get("email", "")
+    except Exception as e:
+        st.error("Invalid QR data format.")
+        category = subcategory = None
+        suggestions = []
+else:
+    category = subcategory = None
+    suggestions = []
+
+# 🗺️ SAME DATA AS ROBOT
+categories = ["Tourist attractions", "Hotels", "Transportation", "Emergency services"]
+subcategories = {
+    "Tourist attractions": ["Museums", "Restaurants", "Nature", "Shopping malls"],
+    "Hotels": ["Budget", "Luxury", "Downtown", "With pool"],
+    "Transportation": ["Taxi", "Metro", "Car rental", "Ride-sharing apps"],
+    "Emergency services": ["Hospital", "Police", "Embassy", "Pharmacy"],
+}
+recommendations = {
+    "Museums": ["Biomuseum", "Canal Museum", "Museum of Contemporary Art"],
+    "Restaurants": ["Seafood Market", "Tantalo", "Maito", "Fonda Lo Que Hay"],
+    "Nature": ["Metropolitan Park", "Taboga Island", "Coiba National Park", "Boquete"],
+    "Shopping malls": ["Multiplaza", "Albrook Mall", "Metromall", "Soho Mall"],
+    "Budget": ["Hostel Loco Coco Loco", "Hotel Centroamericano", "Hotel Marparaiso"],
+    "Luxury": ["Hotel Las Américas", "W Panama", "Trump Tower"],
+    "Downtown": ["Hotel El Panamá", "Hotel Riu", "Hotel Marbella"],
+    "With pool": ["Sortis Hotel", "Hotel Crowne Plaza", "Bristol Panama"],
+    "Taxi": ["Uber", "Cabify", "Panamanian Taxis"],
+    "Metro": ["Line 1", "Line 2", "MetroBus Recharges"],
+    "Car rental": ["Thrifty", "Hertz", "Dollar Rent A Car"],
+    "Ride-sharing apps": ["Uber", "InDrive", "Cabify"],
+    "Hospital": ["Punta Pacífica Hospital", "National Hospital", "Santo Tomás Hospital"],
+    "Police": ["National Police", "DIJ", "Emergency 104"],
+    "Embassy": ["US Embassy", "French Embassy", "Colombian Embassy"],
+    "Pharmacy": ["Arrocha", "Metro Plus", "El Javillo"]
+}
+
+# === If payload from robot ===
+if payload_data:
+    st.markdown(f"<h1>👋 Hello, {name.title()}!</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h3>Welcome to Panama 🇵🇦</h3>", unsafe_allow_html=True)
+
+    if category and subcategory:
+        st.markdown(f"### You asked about **{subcategory}** in **{category}**.")
+    else:
+        st.markdown("### Here's what XPLØRBOT recommends for you:")
+
+    st.markdown("#### 🌟 Recommended for you:")
+    for place in suggestions:
+        url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
+        st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
+
+# === Manual input mode (no payload) ===
+elif name and country and email:
     st.markdown(f"<h1>👋 Welcome, {name.title()} from {country.title()}!</h1>", unsafe_allow_html=True)
     st.markdown(f"<h3>📧 Email: {email}</h3>", unsafe_allow_html=True)
     st.markdown("<h4>How can I assist you today?</h4>", unsafe_allow_html=True)
 
-    category = st.selectbox("Select a category:", [
-        "Tourist Attractions", "Hotels", "Transportation", "Emergency"
-    ])
+    category = st.selectbox("Select a category:", categories)
+    subcategory = st.selectbox("Select a subcategory:", subcategories[category])
+    
+    st.markdown("### 🌟 Recommended for you:")
+    for place in recommendations[subcategory]:
+        url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
+        st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
 
-    subcategory = None
-    if category == "Tourist Attractions":
-        subcategory = st.selectbox("What type of place are you looking for?", 
-                                   ["Museums", "Restaurants", "Nature", "Shopping Centers"])
-    elif category == "Hotels":
-        subcategory = st.selectbox("What kind of hotel do you prefer?", 
-                                   ["Budget", "Luxury", "City Center", "With Pool"])
-    elif category == "Transportation":
-        subcategory = st.selectbox("What do you need?", 
-                                   ["Taxi", "Metro", "Car Rental", "Ride Apps"])
-    elif category == "Emergency":
-        subcategory = st.selectbox("What kind of emergency?", 
-                                   ["Hospital", "Police", "Embassy", "Pharmacy"])
-
-    recommendations = {
-        "Museums": ["Biomuseo", "Panama Canal Museum", "Museum of Contemporary Art"],
-        "Restaurants": ["Mercado del Marisco", "Tantalo", "Maito", "Fonda Lo Que Hay"],
-        "Nature": ["Metropolitan Park", "Taboga Island", "Coiba Park", "Boquete"],
-        "Shopping Centers": ["Multiplaza", "Albrook Mall", "Metromall", "Soho Mall"],
-        "Budget": ["Hostal Loco Coco Loco", "Hotel Centroamericano", "Hotel Marparaiso"],
-        "Luxury": ["Las Américas Golden Tower", "W Panama", "JW Marriott Tower"],
-        "City Center": ["Hotel El Panamá", "Riu Plaza", "Hotel Marbella"],
-        "With Pool": ["Sortis Hotel", "Crowne Plaza", "The Bristol Panama"],
-        "Taxi": ["Uber", "Cabify", "Panamanian Taxis"],
-        "Metro": ["Line 1", "Line 2", "MetroBus Reloads"],
-        "Car Rental": ["Thrifty", "Hertz", "Dollar Rent A Car"],
-        "Ride Apps": ["Uber", "InDrive", "Cabify"],
-        "Hospital": ["Punta Pacifica Hospital", "National Hospital", "Santo Tomás Hospital"],
-        "Police": ["National Police", "DIJ", "Call 104"],
-        "Embassy": ["U.S. Embassy", "French Embassy", "Colombian Embassy"],
-        "Pharmacy": ["Arrocha", "Metro Plus", "El Javillo"]
-    }
-
-    if subcategory in recommendations:
-        st.markdown("### 🌟 Recommended for you:")
-        places = random.sample(recommendations[subcategory], k=min(4, len(recommendations[subcategory])))
-        for place in places:
-            url = f"https://www.google.com/search?q={urllib.parse.quote(place + ' Panama')}"
-            st.markdown(f"<a class='xplor-button' href='{url}' target='_blank'>{place}</a>", unsafe_allow_html=True)
-
-# 📲 QR Generator Screen
+# === Default QR Generator ===
 else:
     st.markdown("<h1>🎯 Welcome QR Generator</h1>", unsafe_allow_html=True)
     st.markdown("### Create your personalized welcome link for XPLØRBOT!")
@@ -126,5 +155,5 @@ else:
 
         st.markdown(f"<a class='xplor-button' href='{personal_url}' target='_blank'>Open your Welcome Page</a>", unsafe_allow_html=True)
 
-# Footer
-st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 </div>", unsafe_allow_html=True)
+# === Footer ===
+st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 for the World Robot Olympiad (Singapore Edition)</div>", unsafe_allow_html=True)
