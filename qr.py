@@ -127,4 +127,4 @@ else:
         st.markdown(f"<a class='xplor-button' href='{personal_url}' target='_blank'>Open your Welcome Page</a>", unsafe_allow_html=True)
 
 # Footer
-st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 for the World Robot Olympiad</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>🌍 XPLØR © 2025 – Made in Panama 🇵🇦 </div>", unsafe_allow_html=True)
