@@ -4,7 +4,6 @@ import json, base64
 
 st.set_page_config(page_title="XPLØR QR", page_icon="🌐", layout="wide")
 
-# 🌈 NEON FUTURISTIC STYLE — Designed for WRO Stage Display
 st.markdown("""
 <style>
 html, body, [class*="css"] {
